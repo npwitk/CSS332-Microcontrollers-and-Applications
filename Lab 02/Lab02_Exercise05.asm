@@ -1,10 +1,10 @@
 START:  
-	.ORG 0
+    .ORG 0
 	
     LDI R20, 1      ; Load first odd number (1) into R20  
     LDI R21, 9      ; Load the upper limit (9) into R21  
     LDI R22, 2      ; Load increment value (2) into R22  
-	STS 0x02B5, R20
+    STS 0x02B5, R20
 
 .ORG 80
 LOOP:  
@@ -13,7 +13,7 @@ LOOP:
     ADD R20, R22    ; Increment to the next odd number 
     STS 0x02B5, R20 ; Store the current odd number in memory address 0x02B5  
     
-	CALL DELAY      ; Call 10 ms delay subroutine  
+    CALL DELAY      ; Call 10 ms delay subroutine  
     JMP LOOP        ; Repeat loop  
 
 .ORG 100
