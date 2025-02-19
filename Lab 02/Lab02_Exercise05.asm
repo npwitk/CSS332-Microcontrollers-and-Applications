@@ -20,7 +20,7 @@ LOOP:
 DELAY:  
     LDI R16, 128    ; Load outer loop counter  
 AGAIN:  
-    LDI R17, 161    ; Load inner loop counter  
+    LDI R17, 250    ; Load inner loop counter  
 HERE:  
     NOP             ; No operation (waste time)  
     NOP             ; No operation  
