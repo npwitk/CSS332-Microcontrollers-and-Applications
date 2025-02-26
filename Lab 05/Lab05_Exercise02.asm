@@ -4,9 +4,9 @@
     OUT DDRD, R16       ; Set all pins of Port D as outputs (DDRD = 0xFF)
 
 AGAIN1:                 ; Label for the main loop
-    LDI ZH, HIGH(0x400)  ; Load the high byte of the address 0x400 into ZH
+    LDI ZH, HIGH(0x400)  ; Load the high byte of the address 0x400 into ZH หรือ MYDATA<<1 (Shift เอา)
     LDI ZL, LOW(0x400)   ; Load the low byte of the address 0x400 into ZL
-    LDI R17, 10          ; Load loop counter (10 iterations) into R17
+    LDI R17, 9          ; Load loop counter (10 iterations) into R17 (ถ้ามี 9 ตัวก็ปรับเป็น 9)
 
 AGAIN2:                 ; Label for the inner loop
     LPM R16, Z+         ; Load program memory byte from the address in Z (ZL:ZH) into R16, then increment Z. This reads data from the lookup table at 0x400.
@@ -37,4 +37,4 @@ L3:
 .ORG 0x200            ; Set the origin to address 0x200 (where the lookup table is stored)
 
 MYDATA:                 ; Lookup table for some kind of output (e.g., 7-segment display codes)
-    .DB 0x76, 0x79, 0x38, 0x38, 0x3F, 0x5B, 0x66, 0x5B, 0x5B
+    .DB 0x76, 0x79, 0x38, 0x38, 0x3F, 0x5B, 0x66, 0x5B, 0x5B (จริง ๆ มันจะขึ้น Error เพราะว่ามีจำนวนเลขคี่ แต่ไม่เป็นไร เหมือนแค่ Warning เฉย ๆ)
