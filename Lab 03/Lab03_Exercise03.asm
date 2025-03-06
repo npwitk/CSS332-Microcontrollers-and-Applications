@@ -1,6 +1,5 @@
 		.ORG	0
 
-
 		SBI	DDRD, 4
 		CBI	PORTD, 4
 		SBI	DDRD, 5
