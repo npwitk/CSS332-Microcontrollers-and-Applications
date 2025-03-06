@@ -4,12 +4,12 @@
     OUT DDRD, R16       ; Set all pins of Port D as outputs (DDRD = 0xFF)
 
 AGAIN1:                 ; Label for the main loop
-LDI ZH, HIGH(0x400) ; Load the high byte of the address of MYDATA (or 0x400 if MYDATA is at that address) into ZH.  The <<1 is likely a mistake and should not be there.
-    LDI ZL, LOW(0x400)  ; Load the low byte of the address of MYDATA (or 0x400 if MYDATA is at that address) into ZL. The <<1 is likely a mistake and should not be there.
+    LDI ZH, HIGH(0x400) ; Load the high byte of the address of MYDATA (or 0x400 if MYDATA is at that address) into ZH
+    LDI ZL, LOW(0x400)  ; Load the low byte of the address of MYDATA (or 0x400 if MYDATA is at that address) into ZL
     LDI R17, 10          ; Load loop counter (10 iterations) into R17
 
 AGAIN2:                 ; Label for the inner loop
-    LPM R16, Z+         ; Load program memory byte from the address in Z (ZL:ZH) into R16, then increment Z. This reads data from the lookup table MYDATA.
+    LPM R16, Z+         ; Load program memory byte from the address in Z (ZL:ZH) into R16, then increment Z
     OUT PORTD, R16       ; Output the value in R16 to Port D (controlling LEDs or a display)
     CALL DELAY           ; Call the delay subroutine
     DEC R17             ; Decrement the loop counter R17
