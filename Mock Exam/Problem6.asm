@@ -18,23 +18,23 @@ AGAIN2:                 ; Label for the inner loop
 
 ; 2-second delay subroutine
 DELAY:
-    LDI R23, 120        ; Outer loop counter for delay
+    LDI R23, 64
 L1:
-    LDI R24, 200        ; Middle loop counter for delay
+    LDI R24, 200
 L2:
-    LDI R25, 250        ; Inner loop counter for delay
+    LDI R25, 250
 L3:
-    NOP                 ; No operation (burns a clock cycle)
-    NOP                 ; No operation (burns a clock cycle)
-    DEC R25             ; Decrement R25
-    BRNE L3             ; Branch if R25 is not zero (loop back to L3)
-    DEC R24             ; Decrement R24
-    BRNE L2             ; Branch if R24 is not zero (loop back to L2)
-    DEC R23             ; Decrement R23
-    BRNE L1             ; Branch if R23 is not zero (loop back to L1)
-    RET                 ; Return from the delay subroutine
+    NOP
+    NOP
+    DEC R25
+    BRNE L3
+    DEC R24
+    BRNE L2
+    DEC R23
+    BRNE L1
+    RET    
 
-.ORG 0x200            ; Set the origin to address 0x200 (where the lookup table is stored)
+.ORG 0x200
 
-MYDATA:                 ; Lookup table for 7-segment display codes (common cathode)
+MYDATA:                 ; My student ID hereeeee...
     .DB 0x7D, 0x7D, 0x5B, 0x5B, 0x07, 0x07, 0x5B, 0x66, 0x5B, 0x5B
