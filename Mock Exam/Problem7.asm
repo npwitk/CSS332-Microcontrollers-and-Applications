@@ -1,4 +1,4 @@
-.ORG 0x00             ; Set the origin to address 0x00 (start of flash memory)
+.ORG 0x00
 
     LDI R20, @0
 L1: LDI R21, @1
