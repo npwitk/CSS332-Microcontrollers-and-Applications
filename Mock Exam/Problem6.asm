@@ -4,8 +4,8 @@
     OUT DDRD, R16       ; Set all pins of Port D as outputs (DDRD = 0xFF)
 
 AGAIN1:                 ; Label for the main loop
-    LDI ZH, HIGH(0x400) ; Load the high byte of the address of MYDATA (or 0x400 if MYDATA is at that address) into ZH
-    LDI ZL, LOW(0x400)  ; Load the low byte of the address of MYDATA (or 0x400 if MYDATA is at that address) into ZL
+    LDI ZH, HIGH(0x400) ; Load the high byte of the address of MYDATA into ZH
+    LDI ZL, LOW(0x400)  ; Load the low byte of the address of MYDATA into ZL
     LDI R17, 10          ; Load loop counter (10 iterations) into R17
 
 AGAIN2:                 ; Label for the inner loop
