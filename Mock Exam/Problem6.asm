@@ -16,9 +16,9 @@ AGAIN2:                 ; Label for the inner loop
     BRNE AGAIN2         ; Branch if R17 is not zero (loop back to AGAIN2)
     JMP AGAIN1          ; Jump back to the beginning of the main loop (AGAIN1)
 
-; 1-second delay subroutine
+; 2-second delay subroutine
 DELAY:
-    LDI R23, 60        ; Outer loop counter for delay
+    LDI R23, 120        ; Outer loop counter for delay
 L1:
     LDI R24, 200        ; Middle loop counter for delay
 L2:
