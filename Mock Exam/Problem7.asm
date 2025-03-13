@@ -1,4 +1,5 @@
 .ORG 0x00
+
 .MACRO DELAY
     LDI  R20, @0
 L1: LDI  R21, @1
@@ -12,63 +13,59 @@ L3: NOP
     DEC  R20
     BRNE L1
 .ENDMACRO
+
 .MACRO SETLED
     LDI  R16, @0
     OUT  PORTD, R16
 .ENDMACRO
 
 MAIN:
+    ; Initialize stack pointer
+    LDI  R16, HIGH(RAMEND)
+    OUT  SPH, R16
+    LDI  R16, LOW(RAMEND)
+    OUT  SPL, R16
+    
     ; Initialize PORTD as output
-    LDI  R16, 0xFF
+    LDI  R16, 0xFF       ; All pins as output
     OUT  DDRD, R16
     
-    ; Clear PORTD initially
-    LDI  R16, 0x00
-    OUT  PORTD, R16
+    ; Initialize direction flag and LED pattern
+    LDI  R18, 0x01       ; Direction: 1=right, 0=left
+    LDI  R17, 0x01       ; Start with LED at PD0
 
 LOOP:
-    ; Move LED from left to right (PD0 to PD7)
-    SETLED 0b00000001     ; PD0
+    ; Output current LED pattern
+    MOV  R16, R17
+    OUT  PORTD, R16
+    
+    ; Delay to make movement visible
     DELAY 5, 200, 250
     
-    SETLED 0b00000010     ; PD1
-    DELAY 5, 200, 250
+    ; Check direction
+    CPI  R18, 0x01
+    BRNE GO_LEFT
     
-    SETLED 0b00000100     ; PD2
-    DELAY 5, 200, 250
+GO_RIGHT:
+    ; Shift LED to the right
+    LSL  R17
     
-    SETLED 0b00001000     ; PD3
-    DELAY 5, 200, 250
+    ; Check if we've reached PD7
+    CPI  R17, 0x80
+    BRNE LOOP            ; If not at PD7, continue in same direction
     
-    SETLED 0b00010000     ; PD4
-    DELAY 5, 200, 250
+    ; At PD7, change direction
+    LDI  R18, 0x00       ; Set direction to left
+    RJMP LOOP
     
-    SETLED 0b00100000     ; PD5
-    DELAY 5, 200, 250
+GO_LEFT:
+    ; Shift LED to the left
+    LSR  R17
     
-    SETLED 0b01000000     ; PD6
-    DELAY 5, 200, 250
+    ; Check if we've reached PD0
+    CPI  R17, 0x01
+    BRNE LOOP            ; If not at PD0, continue in same direction
     
-    SETLED 0b10000000     ; PD7
-    DELAY 5, 200, 250
-    
-    ; Move LED from right to left (PD6 to PD1)
-    SETLED 0b01000000     ; PD6
-    DELAY 5, 200, 250
-    
-    SETLED 0b00100000     ; PD5
-    DELAY 5, 200, 250
-    
-    SETLED 0b00010000     ; PD4
-    DELAY 5, 200, 250
-    
-    SETLED 0b00001000     ; PD3
-    DELAY 5, 200, 250
-    
-    SETLED 0b00000100     ; PD2
-    DELAY 5, 200, 250
-    
-    SETLED 0b00000010     ; PD1
-    DELAY 5, 200, 250
-    
-    RJMP LOOP             ; Repeat forever
+    ; At PD0, change direction
+    LDI  R18, 0x01       ; Set direction to right
+    RJMP LOOP
