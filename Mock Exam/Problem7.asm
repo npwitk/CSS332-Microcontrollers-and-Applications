@@ -40,7 +40,7 @@ LOOP:
     OUT  PORTD, R16
     
     ; Delay to make movement visible
-    DELAY 5, 200, 250
+    DELAY 32, 200, 250
     
     ; Check direction
     CPI  R18, 0x01
