@@ -1,54 +1,66 @@
-.ORG 0x00             ; Set the origin to address 0x00 (start of flash memory)
+.ORG 0x00
 
-    LDI R20, @0
-L1: LDI R21, @1
-L2: LDI R22, @2
+.MACRO DELAY
+    LDI  R20, @0
+L1: LDI  R21, @1
+L2: LDI  R22, @2
 L3: NOP
     NOP
-    DEC R22
+    DEC  R22
     BRNE L3
-    DEC R21
+    DEC  R21
     BRNE L2
-    DEC R20
+    DEC  R20
     BRNE L1
 .ENDMACRO
 
-.MACRO SETLED
-    LDI R16, @0
-    OUT PORTD, R16
-.ENDMACRO
-
 MAIN:
-    LDI R17, 0x01         ; Start with LED at PD0
-    LDI R18, 0x80         ; Mask for checking PD7
-    LDI R19, 0x01         ; Direction flag (1 = right, 0 = left)
+    ; Initialize stack pointer
+    LDI  R16, HIGH(RAMEND)
+    OUT  SPH, R16
+    LDI  R16, LOW(RAMEND)
+    OUT  SPL, R16
     
-    SBI DDRD, 0xFF        ; Set PORTD as output
+    ; Initialize PORTD as output
+    LDI  R16, 0xFF       ; All pins as output
+    OUT  DDRD, R16
+    
+    ; Initialize direction flag and LED pattern
+    LDI  R18, 0x01       ; Direction: 1=right, 0=left
+    LDI  R17, 0x01       ; Start with LED at PD0
 
 LOOP:
-    SETLED R17            ; Set LED pattern
-
-    DELAY 50, 255, 255    ; Delay to make movement visible
-
-    TST R19               ; Check direction flag
-    BRNE SHIFT_RIGHT      ; If not zero, shift right
-
-SHIFT_LEFT:
-    LSR R17               ; Shift left
-    BRCC CHANGE_DIR_LEFT  ; If carry set, change direction
+    ; Output current LED pattern
+    MOV  R16, R17
+    OUT  PORTD, R16
+    
+    ; Delay to make movement visible
+    DELAY 32, 200, 250
+    
+    ; Check direction
+    CPI  R18, 0x01
+    BRNE GO_LEFT
+    
+GO_RIGHT:
+    ; Shift LED to the right
+    LSL  R17
+    
+    ; Check if we've reached PD7
+    CPI  R17, 0x80
+    BRNE LOOP            ; If not at PD7, continue in same direction
+    
+    ; At PD7, change direction
+    LDI  R18, 0x00       ; Set direction to left
     RJMP LOOP
-
-SHIFT_RIGHT:
-    LSL R17               ; Shift right
-    BRCC CHANGE_DIR_RIGHT ; If carry set, change direction
-    RJMP LOOP
-
-CHANGE_DIR_LEFT:
-    LDI R17, 0x02         ; Restart from PD1
-    CLR R19               ; Change direction to left
-    RJMP LOOP
-
-CHANGE_DIR_RIGHT:
-    LDI R17, 0x40         ; Restart from PD6
-    LDI R19, 0x01         ; Change direction to right
+    
+GO_LEFT:
+    ; Shift LED to the left
+    LSR  R17
+    
+    ; Check if we've reached PD0
+    CPI  R17, 0x01
+    BRNE LOOP            ; If not at PD0, continue in same direction
+    
+    ; At PD0, change direction
+    LDI  R18, 0x01       ; Set direction to right
     RJMP LOOP
