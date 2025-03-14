@@ -1,68 +1,59 @@
+; Simple Button-Click LED Pattern Shift
+; 
+; Hardware configuration:
+; - 8 LEDs connected to PORTD (PD0-PD7)
+; - Push button connected to PB0 with pull-up resistor
+; - AVR microcontroller running at 16MHz
+
 .ORG 0x00                     ; Start at address 0x00
 
 SETUP:
-    ; Initialize stack pointer (required for CALL instructions)
-    LDI R16, HIGH(RAMEND)     ; Load high byte of RAMEND
-    OUT SPH, R16              ; Set Stack Pointer High
-    LDI R16, LOW(RAMEND)      ; Load low byte of RAMEND
-    OUT SPL, R16              ; Set Stack Pointer Low
-    
     ; Configure PORTD (LEDs) as output
     LDI R16, 0xFF             ; Set all bits to 1
     OUT DDRD, R16             ; Configure PORTD as output
     
     ; Configure PORTB (button) as input with pull-up
-    CBI DDRB, 0               ; Set PB0 as input
+    CBI DDRB, 0               ; Set PB0 as input (button)
     SBI PORTB, 0              ; Enable pull-up resistor on PB0
     
     ; Initialize LED pattern - start with rightmost LED on
     LDI R17, 0x01             ; 0000 0001 - PD0 LED on
     OUT PORTD, R17            ; Output initial pattern to PORTD
+    
+    ; Initialize button state tracking
+    LDI R18, 1                ; R18 = previous button state (1 = not pressed)
 
 MAIN_LOOP:
-    ; Check if button is pressed (PB0 will be LOW when pressed)
-    SBIC PINB, 0              ; Skip next instruction if PB0 is LOW (button pressed)
-    RJMP MAIN_LOOP            ; If button not pressed, keep checking
+    ; Read current button state
+    IN R19, PINB              ; Read PINB
+    ANDI R19, 0x01            ; Isolate PB0 bit
     
-    ; Button pressed, now debounce
-    CALL DEBOUNCE_DELAY       ; Wait for button to stabilize
+    ; Check for button state change (press)
+    CP R19, R18               ; Compare current with previous state
+    BREQ SKIP_ACTION          ; If same, no change
     
-    ; Check if button is still pressed after debounce
-    SBIC PINB, 0              ; Skip next instruction if PB0 is still LOW
-    RJMP MAIN_LOOP            ; If button not pressed anymore (false trigger), go back
+    ; Button state changed - check if it's a press (1->0)
+    CPI R18, 1                ; Was previous state "not pressed"?
+    BRNE SKIP_ACTION          ; If not, it's a release - skip action
     
-    ; Shift LED pattern left
+    ; Button pressed - shift LED pattern
     LSL R17                   ; Logical shift left
     
     ; Check if we've gone past the leftmost LED
     BRNE SKIP_RESET           ; If result is not zero, we're still in range
-    LDI R17, 0x01             ; If result is zero, wrap around to PD0
+    LDI R17, 0x01             ; If zero, wrap around to PD0
     
 SKIP_RESET:
     OUT PORTD, R17            ; Output the new pattern to PORTD
     
-    ; Wait for button release with debounce
-WAIT_RELEASE:
-    SBIS PINB, 0              ; Skip next instruction if PB0 is HIGH (button released)
-    RJMP WAIT_RELEASE         ; If button still pressed, keep checking
+SKIP_ACTION:
+    ; Update previous button state
+    MOV R18, R19              ; Store current state as previous
     
-    CALL DEBOUNCE_DELAY       ; Debounce delay for button release
+    ; Small delay to slow down the checking loop
+    LDI R20, 200
+DELAY_LOOP:
+    DEC R20
+    BRNE DELAY_LOOP
     
     RJMP MAIN_LOOP            ; Return to main loop
-
-; Debounce delay (approximately 20ms at 16MHz)
-DEBOUNCE_DELAY:
-    LDI R20, 50               ; Outer loop counter
-DD1:
-    LDI R21, 200              ; Middle loop counter
-DD2:
-    LDI R22, 200              ; Inner loop counter
-DD3:
-    NOP                       ; No operation
-    DEC R22                   ; Decrement inner counter
-    BRNE DD3                  ; Loop if not zero
-    DEC R21                   ; Decrement middle counter
-    BRNE DD2                  ; Loop if not zero
-    DEC R20                   ; Decrement outer counter
-    BRNE DD1                  ; Loop if not zero
-    RET                       ; Return from subroutine
