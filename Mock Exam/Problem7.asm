@@ -14,11 +14,6 @@ L3: NOP
     BRNE L1
 .ENDMACRO
 
-.MACRO SETLED
-    LDI  R16, @0
-    OUT  PORTD, R16
-.ENDMACRO
-
 MAIN:
     ; Initialize stack pointer
     LDI  R16, HIGH(RAMEND)
