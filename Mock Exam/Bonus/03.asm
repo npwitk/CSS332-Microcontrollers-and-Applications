@@ -1,10 +1,3 @@
-; Simple Button-Click LED Pattern Shift
-; 
-; Hardware configuration:
-; - 8 LEDs connected to PORTD (PD0-PD7)
-; - Push button connected to PB0 with pull-up resistor
-; - AVR microcontroller running at 16MHz
-
 .ORG 0x00                     ; Start at address 0x00
 
 SETUP:
