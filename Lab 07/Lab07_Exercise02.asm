@@ -39,16 +39,6 @@ PIN_SETUP:
 	SBI PORTD, 2   ; Enable pull-up resistor for SW1 (INT0)
 	RET            ; Return from subroutine
 
-; Subroutine to configure Timer0 (not used in this program)
-TIMER0_SETUP:
-	LDI R20, 0xB2  ; Load initial value for Timer0
-	OUT TCNT0, R20 ; Set Timer0 counter register
-	LDI R20, 0x00  ; Set Timer0 mode to normal
-	OUT TCCR0A, R20
-	LDI R20, 0x05  ; Set prescaler to 1024 and start Timer0
-	OUT TCCR0B, R20
-	RET            ; Return from subroutine
-
 .ORG 0x200       ; Start of INT0 ISR (Interrupt Service Routine)
 INT0_ISR:
 	IN R17, PORTB  ; Read current state of PORTB
