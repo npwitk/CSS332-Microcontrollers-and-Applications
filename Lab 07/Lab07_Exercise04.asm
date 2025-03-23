@@ -1,8 +1,3 @@
-;------------------------------------------------------------
-; Microcontroller Assembly Program
-; Handles multiple tasks using main loop and interrupts
-;------------------------------------------------------------
-
 .ORG 0x0        ; Reset Vector
     JMP MAIN    ; Jump to main program
 
