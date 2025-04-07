@@ -1,37 +1,49 @@
+char input = 0; // Global to keep state across loops
+
 void setup() {
-  Serial.begin(9600); // Start Serial communication
-  showMenu();         // Show the menu initially
+  Serial.begin(9600);
+  showMenu();
 }
 
 void loop() {
   if (Serial.available() > 0) {
-    char input = Serial.read(); // Read the first character entered
-    
-    // Clear the rest of the input buffer (like newline or extra characters)
+    // Read characters until we get a valid (non-newline) one
     while (Serial.available() > 0) {
-      Serial.read();
-    }
+      char c = Serial.read();
 
-    switch (input) {
-      case '1':
+      // Skip newline and carriage return
+      if (c == '\n' || c == '\r') {
+        continue;
+      }
+
+      // Found a valid character
+      input = c;
+
+      // Clear rest of the buffer (if any)
+      while (Serial.available() > 0) {
+        Serial.read();
+      }
+
+      // Now handle only if input is set
+      if (input == '1') {
         Serial.println("I chose Coke");
         showMenu();
-        break;
-      case '2':
+      } else if (input == '2') {
         Serial.println("I chose Pepsi");
         showMenu();
-        break;
-      case '3':
+      } else if (input == '3') {
         Serial.println("I chose Tea");
         showMenu();
-        break;
-      case '4':
+      } else if (input == '4') {
         Serial.println("I chose Coffee");
         showMenu();
-        break;
-      default:
+      } else {
         Serial.println("Not in the list. Please select again: ");
-        break;
+        showMenu();
+      }
+
+      // Reset input after handling
+      input = 0;
     }
   }
 }
