@@ -9,7 +9,7 @@ void loop() {
   if (x % 2 == 0) {
     Serial.print("The value of x = ");
     Serial.print(x);
-    Serial.println(" is even.")
+    Serial.println(" is even.");
   }
   delay(1500);
 }
